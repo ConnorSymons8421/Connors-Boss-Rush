@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public float leftAndRightEdge = 8.5f;
+    public float upAndDownEdge = 4.6f;
+    private int countTime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,10 +16,31 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //move player using WASD
         Vector3 pos = this.transform.position;
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (Input.GetKey(KeyCode.A)) pos.x -= (float).005;
-        if (Input.GetKey(KeyCode.D)) pos.x += (float).005;
+        if (Input.GetKey(KeyCode.A)) pos.x -= .0025f;
+        if (Input.GetKey(KeyCode.D)) pos.x += .0025f;
+        if (Input.GetKey(KeyCode.W)) pos.y += .0025f;
+        if (Input.GetKey(KeyCode.S)) pos.y -= .0025f;
+
+
+        //do not move player if position would be out of bounds
+        if (pos.x > leftAndRightEdge) pos.x = leftAndRightEdge;
+        if (pos.x < -leftAndRightEdge) pos.x = -leftAndRightEdge;
+        if (pos.y > upAndDownEdge) pos.y = upAndDownEdge;
+        if (pos.y < -upAndDownEdge) pos.y = -upAndDownEdge;
+
+
         this.transform.position = pos;
+    }
+
+
+    void FixedUpdate()
+    {
+        countTime++;
+        if (countTime > 300)
+        {
+            //Display dash ready
+        }
     }
 }
