@@ -6,7 +6,8 @@ public class Player : MonoBehaviour
 {
     public float leftAndRightEdge = 8.5f;
     public float upAndDownEdge = 4.6f;
-    private int countTime = 0;
+    private int dashCD = 0;
+    private int parryCD = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +17,18 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //track dash and parry cooldowns
+        dashCD++;
+        parryCD++;
+        if (dashCD > 300)
+        {
+            //Display dash ready
+        }
+        if (parryCD > 300)
+        {
+            //Display parry ready
+        }
+
         //move player using WASD
         Vector3 pos = this.transform.position;
         if (Input.GetKey(KeyCode.A)) pos.x -= .0025f;
@@ -37,10 +50,6 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        countTime++;
-        if (countTime > 300)
-        {
-            //Display dash ready
-        }
+        
     }
 }
