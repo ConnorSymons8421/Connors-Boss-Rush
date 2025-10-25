@@ -6,35 +6,40 @@ public class Player : MonoBehaviour
 {
     public float leftAndRightEdge = 8.5f;
     public float upAndDownEdge = 4.6f;
+    public float movementAmount = .0025f;
+    public int abilityCD = 3000;
+
+
     private int dashCD = 0;
     private int parryCD = 0;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private bool dashReady = false;
+    private bool parryReady = false;
+    private bool dashActive = false;
+    private bool parryActive = false;
+    
 
     // Update is called once per frame
     void Update()
     {
         //track dash and parry cooldowns
-        dashCD++;
-        parryCD++;
-        if (dashCD > 300)
+        UpdateCD();
+
+        //activate dash/parry
+        if(Input.GetKey(KeyCode.J) && dashReady == true)
         {
-            //Display dash ready
+            ActivateDash();
         }
-        if (parryCD > 300)
+        if (Input.GetKey(KeyCode.L) && parryReady == true)
         {
-            //Display parry ready
+            ActivateParry();
         }
 
         //move player using WASD
         Vector3 pos = this.transform.position;
-        if (Input.GetKey(KeyCode.A)) pos.x -= .0025f;
-        if (Input.GetKey(KeyCode.D)) pos.x += .0025f;
-        if (Input.GetKey(KeyCode.W)) pos.y += .0025f;
-        if (Input.GetKey(KeyCode.S)) pos.y -= .0025f;
+        if (Input.GetKey(KeyCode.A)) pos.x -= movementAmount;
+        if (Input.GetKey(KeyCode.D)) pos.x += movementAmount;
+        if (Input.GetKey(KeyCode.W)) pos.y += movementAmount;
+        if (Input.GetKey(KeyCode.S)) pos.y -= movementAmount;
 
 
         //do not move player if position would be out of bounds
@@ -47,9 +52,58 @@ public class Player : MonoBehaviour
         this.transform.position = pos;
     }
 
-
-    void FixedUpdate()
+    void UpdateCD()
     {
-        
+        dashCD++;
+        parryCD++;
+        if (dashCD > abilityCD && dashReady == false)
+        {
+            //Display dash ready
+
+            dashReady = true;
+        }
+        if (parryCD > abilityCD && parryReady == false)
+        {
+            //Display parry ready
+
+            parryReady = true;
+        }
     }
+
+    void ActivateDash()
+    {
+        //reset values, increase speed
+        dashCD = 0;
+        dashReady = false;
+        dashActive = true;
+        movementAmount *= 3;
+
+        Invoke("DisableDash", 0.2f);
+    }
+
+    void DisableDash()
+    {
+        dashActive = false;
+        movementAmount /= 3;
+    }
+
+    void ActivateParry()
+    {
+        //reset values, activate parry
+        parryCD = 0;
+        parryReady = false;
+        parryActive = true;
+
+        //visually display parry
+
+        Invoke("DisableParry", 0.5f);
+    }
+
+    void DisableParry()
+    {
+        parryActive = false;
+        
+        //reset parry display
+    }
+
 }
