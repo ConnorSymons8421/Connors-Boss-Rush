@@ -1,0 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Bubble_Small_Straight : MonoBehaviour
+{
+    private float velocity_x = -0.005f;
+    private float velocity_y = 0f;
+    
+    // Update is called once per frame
+    void Update()
+    {
+        Vector3 pos = this.transform.position;
+        pos.x += velocity_x;
+        pos.y += velocity_y;
+        this.transform.position = pos;
+    }
+}
