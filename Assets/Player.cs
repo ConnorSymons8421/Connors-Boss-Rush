@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     public float upAndDownEdge = 4.6f;
     public float movementAmount = .0025f;
     public int abilityCD = 3000;
+    public GameObject dashTracker;
+    public GameObject parryTracker;
 
 
     private int dashCD = 0;
@@ -16,10 +18,17 @@ public class Player : MonoBehaviour
     private bool parryReady = false;
     private bool dashActive = false;
     private bool parryActive = false;
-    
 
-    // Update is called once per frame
-    void Update()
+
+    void Start()
+    {
+        dashTracker = Instantiate<GameObject>(dashTracker);
+        dashTracker.SetActive(false);
+        parryTracker.SetActive(false);
+    }
+
+        // Update is called once per frame
+        void Update()
     {
         //track dash and parry cooldowns
         UpdateCD();
@@ -56,17 +65,15 @@ public class Player : MonoBehaviour
     {
         dashCD++;
         parryCD++;
-        if (dashCD > abilityCD && dashReady == false)
-        {
-            //Display dash ready
-
+        if (dashCD > abilityCD && dashReady == false) 
+        { 
             dashReady = true;
+            dashTracker.SetActive(true);
         }
-        if (parryCD > abilityCD && parryReady == false)
-        {
-            //Display parry ready
-
+        if (parryCD > abilityCD && parryReady == false) 
+        { 
             parryReady = true;
+            parryTracker.SetActive(true);
         }
     }
 
@@ -77,6 +84,8 @@ public class Player : MonoBehaviour
         dashReady = false;
         dashActive = true;
         movementAmount *= 3;
+        dashTracker.SetActive(false);
+        
 
         Invoke("DisableDash", 0.2f);
     }
@@ -93,8 +102,7 @@ public class Player : MonoBehaviour
         parryCD = 0;
         parryReady = false;
         parryActive = true;
-
-        //visually display parry
+        parryTracker.SetActive(false);
 
         Invoke("DisableParry", 0.5f);
     }
@@ -102,8 +110,7 @@ public class Player : MonoBehaviour
     void DisableParry()
     {
         parryActive = false;
-        
-        //reset parry display
     }
+
 
 }

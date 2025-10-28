@@ -98,6 +98,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a2b2358a0b9d945b725a6fca8331f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftAndRightEdge: 8.5
+  upAndDownEdge: 4.6
+  movementAmount: 0.0025
+  abilityCD: 3000
+  dashTracker: {fileID: 0}
+  parryTracker: {fileID: 0}
 --- !u!54 &7110503996476898411
 Rigidbody:
   m_ObjectHideFlags: 0
