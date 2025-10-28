@@ -9,6 +9,10 @@ public class Enemy : MonoBehaviour
     public GameObject bubble3Prefab;
     public GameObject bubble4Prefab;
 
+    public GameObject critHitbox;
+    public GameObject normalHitbox;
+    public List<GameObject> hitboxList;
+
     public float leftEdge = 6f;
     public float rightEdge = 8f;
     public float upAndDownEdge = 3.2f;
@@ -18,6 +22,16 @@ public class Enemy : MonoBehaviour
     private int movementCD = 0;
     private int attackCD = 0;
     
+
+    void Start()
+    {
+        //instantiate hitboxes
+        GameObject crit = Instantiate<GameObject>(critHitbox);
+        GameObject normal = Instantiate<GameObject>(normalHitbox);
+        hitboxList = new List<GameObject>();
+        hitboxList.Add(crit);
+        hitboxList.Add(normal);
+    }
 
     // Update is called once per frame
     void Update()
@@ -40,7 +54,13 @@ public class Enemy : MonoBehaviour
             if (pos.y > upAndDownEdge) pos.y = upAndDownEdge;
             if (pos.y < -upAndDownEdge) pos.y = -upAndDownEdge;
 
+            //move enemy along with its hitboxes
             this.transform.position = pos;
+            hitboxList[1].transform.position = pos;
+
+            //move crit hitbox to correct position
+            pos.y += 1.4f;
+            hitboxList[0].transform.position = pos;
 
             //reset movement cooldown
             movementCD = 0;

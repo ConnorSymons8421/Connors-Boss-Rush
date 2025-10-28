@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class BossFight : MonoBehaviour
 {
     public GameObject heartPrefab;
+    public GameObject turtleSquishedPrefab;
     public List<GameObject> heartList;
 
     public int playerLives = 5;
+    public int enemyLives = 100;
     public float heartX = 8f;
     public float heartY = 4.5f;
     public float heartSpacingX = -1f;
@@ -43,7 +45,27 @@ public class BossFight : MonoBehaviour
 
         if (heartList.Count == 0)
         {
-            SceneManager.LoadScene("Game_Over");
+            Invoke("GameOver", 0f);
         }
     }
+
+    public void EnemyHit(int damage)
+    {
+        enemyLives -= damage;
+
+        if (enemyLives <= 0)
+        {
+            GameObject enemy = GameObject.Find("TurtleEnemy");
+            GameObject squished = Instantiate<GameObject>(turtleSquishedPrefab);
+            squished.transform.position = enemy.transform.position;
+            Destroy(enemy);
+            Invoke("GameOver", 5f);
+        }
+            
+    }
+
+    void GameOver()
+        {
+            SceneManager.LoadScene("Game_Over");
+        }
 }

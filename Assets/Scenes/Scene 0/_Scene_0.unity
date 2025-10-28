@@ -559,8 +559,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heartPrefab: {fileID: 2703757847222353255, guid: 17f47909cc7f5d14ebd1f70a848ae0e4, type: 3}
+  turtleSquishedPrefab: {fileID: 9030810055396897933, guid: 4bfc266a6c4aba54ca5f1ad01fa3f636, type: 3}
   heartList: []
   playerLives: 5
+  enemyLives: 100
   heartX: 8
   heartY: 4.5
   heartSpacingX: -1
@@ -878,6 +880,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3681927968665396461, guid: 40b8aa8f6f783374bbee6d4544481ada, type: 3}
+      propertyPath: critHitbox
+      value: 
+      objectReference: {fileID: 4177359463690724197, guid: 9b679c1719be4c34b8f5465a698b3cbd, type: 3}
+    - target: {fileID: 3681927968665396461, guid: 40b8aa8f6f783374bbee6d4544481ada, type: 3}
+      propertyPath: normalHitbox
+      value: 
+      objectReference: {fileID: 6905139211075267484, guid: 99adaa96f7dae8448845c10d85270c0f, type: 3}
     - target: {fileID: 6430430131047030995, guid: 40b8aa8f6f783374bbee6d4544481ada, type: 3}
       propertyPath: m_Name
       value: TurtleEnemy
