@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour
         //use a random attack every attackDelay frames
         if (attackCD >= attackDelay)
         {
-            int attack = Random.Range(0, 2);
+            int attack = Random.Range(0, 3);
             switch (attack)
             {
                 case 0:

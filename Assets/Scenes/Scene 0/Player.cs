@@ -25,8 +25,8 @@ public class Player : MonoBehaviour
         parryTracker.SetActive(false);
     }
 
-        // Update is called once per frame
-        void Update()
+    // Update is called once per frame
+    void Update()
     {
         //track dash and parry cooldowns
         UpdateCD();
@@ -57,6 +57,7 @@ public class Player : MonoBehaviour
 
 
         this.transform.position = pos;
+        
     }
 
     void UpdateCD()
@@ -108,5 +109,22 @@ public class Player : MonoBehaviour
         parryActive = false;
     }
 
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        //detect player being hit by enemy projectiles
+        GameObject collideWith = coll.gameObject;
+        if (collideWith.CompareTag("EnemyProj"))
+        {
+            Destroy(collideWith);
+            //deal player damage if parry is currently inactive
+            if (!parryActive)
+            {
+                BossFight bfScript = Camera.main.GetComponent<BossFight>();
+                bfScript.PlayerHit();
+            }
+        }
+        //reset any rotation caused by collisions
+        this.transform.rotation = Quaternion.identity;
+    }
 
 }
