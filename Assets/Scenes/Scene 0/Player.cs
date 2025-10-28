@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     public float leftAndRightEdge = 8.5f;
     public float upAndDownEdge = 4.6f;
     public float movementAmount = .0025f;
+    public int attackDelay = 200;
     public int abilityCD = 3000;
     public GameObject dashTracker;
     public GameObject parryTracker;
@@ -14,8 +15,10 @@ public class Player : MonoBehaviour
 
     private int dashCD = 0;
     private int parryCD = 0;
+    private int attackCD = 0;
     private bool dashReady = false;
     private bool parryReady = false;
+    private bool attackReady = false;
     private bool parryActive = false;
 
 
@@ -28,10 +31,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //track dash and parry cooldowns
+        //track dash, parry, and attack cooldowns
         UpdateCD();
 
-        //activate dash/parry
+        //activate dash/parry/attack
         if(Input.GetKey(KeyCode.J) && dashReady == true)
         {
             ActivateDash();
@@ -39,6 +42,10 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.L) && parryReady == true)
         {
             ActivateParry();
+        }
+        if (Input.GetKey(KeyCode.K) && attackReady == true)
+        {
+            Attack();
         }
 
         //move player using WASD
@@ -64,6 +71,7 @@ public class Player : MonoBehaviour
     {
         dashCD++;
         parryCD++;
+        attackCD++;
         if (dashCD > abilityCD && dashReady == false) 
         { 
             dashReady = true;
@@ -74,6 +82,15 @@ public class Player : MonoBehaviour
             parryReady = true;
             parryTracker.SetActive(true);
         }
+        if (attackCD > attackDelay && attackReady == false)
+        {
+            attackReady = true;
+        }
+    }
+
+    void Attack()
+    {
+
     }
 
     void ActivateDash()

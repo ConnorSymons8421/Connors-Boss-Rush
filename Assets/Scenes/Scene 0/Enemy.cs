@@ -74,25 +74,37 @@ public class Enemy : MonoBehaviour
     void Attack1()
     {
         GameObject bubble = Instantiate<GameObject>(bubble1Prefab);
-        bubble.transform.position = transform.position;
+        Vector3 pos = this.transform.position;
+        //spawn attacks in front of enemy
+        pos.x = pos.x - 1f;
+        bubble.transform.position = pos;
     }
 
     void Attack2()
     {
         GameObject bubble = Instantiate<GameObject>(bubble2Prefab);
-        bubble.transform.position = transform.position;
+        Vector3 pos = this.transform.position;
+        //spawn attacks in front of enemy
+        pos.x = pos.x - 2f;
+        bubble.transform.position = pos;
     }
 
     void Attack3()
     {
         GameObject bubble = Instantiate<GameObject>(bubble3Prefab);
-        bubble.transform.position = transform.position;
+        Vector3 pos = this.transform.position;
+        //spawn attacks in front of enemy
+        pos.x = pos.x - 1f;
+        bubble.transform.position = pos;
     }
 
     void Attack4()
     {
         GameObject bubble = Instantiate<GameObject>(bubble4Prefab);
-        bubble.transform.position = transform.position;
+        Vector3 pos = this.transform.position;
+        //spawn attacks in front of enemy
+        pos.x = pos.x - 1f;
+        bubble.transform.position = pos;
     }
 
     void BigAttack()
