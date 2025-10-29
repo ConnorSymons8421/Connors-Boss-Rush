@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public AudioClip miss;
+    public AudioClip normalHit;
+    public AudioClip criticalhit;
+    public AudioClip dashSound;
+    public AudioClip barrierSound;
+    public AudioClip hurtSound;
+
     public float leftAndRightEdge = 8.5f;
     public float upAndDownEdge = 4.6f;
     public float movementAmount = .0025f;
@@ -11,6 +18,11 @@ public class Player : MonoBehaviour
     public int abilityCD = 3000;
     public GameObject dashTracker;
     public GameObject parryTracker;
+    public GameObject swordPrefab;
+    public GameObject barrierPrefab;
+    public GameObject critPrefab;
+    public GameObject hitPrefab;
+    public LayerMask hitboxes;
 
 
     private int dashCD = 0;
@@ -20,10 +32,19 @@ public class Player : MonoBehaviour
     private bool parryReady = false;
     private bool attackReady = false;
     private bool parryActive = false;
+    private bool hurt = false;
 
+    private RaycastHit2D hit;
+
+    [SerializeField] Sprite[] playerSprites;
+    private Sprite newSprite;
 
     void Start()
     {
+        critPrefab.SetActive(false);
+        hitPrefab.SetActive(false);
+        swordPrefab.SetActive(false);
+        barrierPrefab.SetActive(false);
         dashTracker.SetActive(false);
         parryTracker.SetActive(false);
     }
@@ -62,9 +83,21 @@ public class Player : MonoBehaviour
         if (pos.y > upAndDownEdge) pos.y = upAndDownEdge;
         if (pos.y < -upAndDownEdge) pos.y = -upAndDownEdge;
 
-
         this.transform.position = pos;
-        
+
+        //move swordswing and barrier along with player
+        pos.z -= 1;
+        Vector3 barrierPos = pos;
+        barrierPos.x -= 0.1f;
+        barrierPos.y -= 0.1f;
+        barrierPrefab.transform.position = barrierPos;
+
+        pos.x += 2.5f;
+        swordPrefab.transform.position = pos;
+        pos.x += 3;
+        pos.z -= .1f;
+        critPrefab.transform.position = pos;
+        hitPrefab.transform.position = pos;
     }
 
     void UpdateCD()
@@ -90,7 +123,50 @@ public class Player : MonoBehaviour
 
     void Attack()
     {
+        //play sword animation
+        SwordSwing();
+        attackCD = 0;
+        attackReady = false;
+        //enemy hitboxes are on layer 3. They are the only things to be detected by this raycast
+        hit = Physics2D.Raycast(this.transform.position, Vector2.right, 5f, hitboxes);
 
+        if (hit)
+        {
+            //get camera bossfight object
+            BossFight bfScript = Camera.main.GetComponent<BossFight>();
+
+            //check if hit was on the critical area
+            if (hit.collider.name == "CriticalHitbox(Clone)")
+            {
+                critPrefab.SetActive(true);
+                GetComponent<AudioSource>().PlayOneShot(criticalhit, 0.1f);
+                bfScript.EnemyHit(3);
+            }
+            else if (hit.collider.name == "NormalHitbox(Clone)")
+            {
+                hitPrefab.SetActive(true);
+                GetComponent<AudioSource>().PlayOneShot(normalHit, 0.1f);
+                bfScript.EnemyHit(1);
+            }
+        }
+        else
+        {
+            //play miss sound
+            GetComponent<AudioSource>().PlayOneShot(miss, 0.1f);
+        }
+    }
+
+    void SwordSwing()
+    {
+        swordPrefab.SetActive(true);
+        Invoke("EndSwing", 0.5f);
+    }
+
+    void EndSwing()
+    {
+        swordPrefab.SetActive(false);
+        critPrefab.SetActive(false);
+        hitPrefab.SetActive(false);
     }
 
     void ActivateDash()
@@ -100,7 +176,8 @@ public class Player : MonoBehaviour
         dashReady = false;
         movementAmount *= 3;
         dashTracker.SetActive(false);
-        
+        GetComponent<AudioSource>().PlayOneShot(dashSound, 0.3f);
+
 
         Invoke("DisableDash", 0.35f);
     }
@@ -117,6 +194,8 @@ public class Player : MonoBehaviour
         parryReady = false;
         parryActive = true;
         parryTracker.SetActive(false);
+        barrierPrefab.SetActive(true);
+        GetComponent<AudioSource>().PlayOneShot(barrierSound, 0.3f);
 
         Invoke("DisableParry", 0.5f);
     }
@@ -124,6 +203,7 @@ public class Player : MonoBehaviour
     void DisableParry()
     {
         parryActive = false;
+        barrierPrefab.SetActive(false);
     }
 
     void OnCollisionEnter2D(Collision2D coll)
@@ -133,15 +213,33 @@ public class Player : MonoBehaviour
         if (collideWith.CompareTag("EnemyProj"))
         {
             Destroy(collideWith);
-            //deal player damage if parry is currently inactive
-            if (!parryActive)
+            //deal player damage if parry is currently inactive and has not been hurt recently
+            if (!parryActive && !hurt)
             {
+                Invoke("Hurt", 0f);
                 BossFight bfScript = Camera.main.GetComponent<BossFight>();
                 bfScript.PlayerHit();
             }
         }
         //reset any rotation caused by collisions
         this.transform.rotation = Quaternion.identity;
+    }
+
+    void Hurt()
+    {
+        hurt = true;
+        GetComponent<AudioSource>().PlayOneShot(hurtSound, 0.3f);
+        //update with hurt sprite, then revert to normal
+        newSprite = playerSprites[1];
+        gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
+        Invoke("Unhurt", 3f);
+    }
+
+    void Unhurt()
+    {
+        hurt = false;
+        newSprite = playerSprites[0];
+        gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
     }
 
 }

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public AudioClip bubble1Sound;
+    public AudioClip bubble2Sound;
+    public AudioClip waveSound;
+
     public GameObject bubble1Prefab;
     public GameObject bubble2Prefab;
     public GameObject bubble3Prefab;
@@ -21,7 +25,11 @@ public class Enemy : MonoBehaviour
 
     private int movementCD = 0;
     private int attackCD = 0;
-    
+    private bool attackDisable = false;
+    private bool bigAttackDisable = false;
+
+    [SerializeField] Sprite[] enemySprites;
+    private Sprite newSprite;
 
     void Start()
     {
@@ -67,7 +75,7 @@ public class Enemy : MonoBehaviour
         }
 
         //use a random attack every attackDelay frames
-        if (attackCD >= attackDelay)
+        if (attackCD >= attackDelay && !attackDisable)
         {
             int attack = Random.Range(0, 3);
             switch (attack)
@@ -76,18 +84,33 @@ public class Enemy : MonoBehaviour
                     Invoke("Attack1", 0f);
                     Invoke("Attack1", 0.3f);
                     Invoke("Attack1", 0.6f);
+                    GetComponent<AudioSource>().PlayOneShot(bubble1Sound, 0.3f);
                     break;
                 case 1:
                     Invoke("Attack2", 0f);
+                    GetComponent<AudioSource>().PlayOneShot(bubble2Sound, 0.3f);
                     break; 
                 case 2:
                     Invoke("Attack1", 0f);
                     Invoke("Attack3", 0f);
                     Invoke("Attack4", 0f);
+                    GetComponent<AudioSource>().PlayOneShot(bubble2Sound, 0.3f);
                     break;
 
             }
             attackCD = 0;
+        }
+
+        //if hp is below threshold, transform fight to become more difficult
+        BossFight bfScript = Camera.main.GetComponent<BossFight>();
+        int lives = bfScript.enemyLives;
+        if(lives < 60 & !bigAttackDisable)
+        {
+            //update with new sprite
+            newSprite = enemySprites[3];
+            gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
+            bigAttackDisable = true;
+            Invoke("BigAttack", 0f);
         }
     }
 
@@ -129,6 +152,21 @@ public class Enemy : MonoBehaviour
 
     void BigAttack()
     {
+        Invoke("BubbleWave", 3f);
+        Invoke("BubbleWave", 5f);
+        attackDelay /= 2;
+    }
 
+    void BubbleWave()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            GameObject bubble = Instantiate<GameObject>(bubble1Prefab);
+            Vector3 pos = this.transform.position;
+
+            pos.x = pos.x - 1f;
+            pos.y = upAndDownEdge - (i*upAndDownEdge)/5;
+            bubble.transform.position = pos;
+        }
     }
 }
